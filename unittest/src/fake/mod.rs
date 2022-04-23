@@ -15,6 +15,7 @@ mod gpio;
 mod kernel;
 mod leds;
 mod low_level_debug;
+mod rng;
 mod syscall_driver;
 mod syscalls;
 
@@ -24,6 +25,7 @@ pub use gpio::{Gpio, GpioMode, InterruptEdge, PullMode};
 pub use kernel::Kernel;
 pub use leds::Leds;
 pub use low_level_debug::{LowLevelDebug, Message};
+pub use rng::Rng;
 pub use syscall_driver::SyscallDriver;
 pub use syscalls::Syscalls;
 

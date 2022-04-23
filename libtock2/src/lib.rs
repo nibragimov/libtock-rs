@@ -23,3 +23,7 @@ pub mod low_level_debug {
     pub type LowLevelDebug = lldb::LowLevelDebug<super::runtime::TockSyscalls>;
     pub use lldb::AlertCode;
 }
+pub mod rng {
+    use libtock_rng as rng;
+    pub type Rng = rng::Rng<super::runtime::TockSyscalls>;
+}

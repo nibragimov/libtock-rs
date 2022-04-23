@@ -16,5 +16,6 @@ libtock_buttons = { path = "../apis/buttons" }
 libtock_console = { path = "../apis/console" }
 libtock_leds = { path = "../apis/leds" }
 libtock_low_level_debug = { path = "../apis/low_level_debug" }
-
+libtock_rng = { path = "../apis/rng" }
 libtock_debug_panic = { path = "../panic_handlers/debug_panic" }
+numtoa = "0.2.4"

@@ -16,6 +16,7 @@ members = [
     "apis/console",
     "apis/leds",
     "apis/low_level_debug",
+    "apis/rng",
     "libtock2",
     "panic_handlers/debug_panic",
     "panic_handlers/small_panic",

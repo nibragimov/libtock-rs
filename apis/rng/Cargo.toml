@@ -1,0 +1,12 @@
+[package]
+name = "libtock_rng"
+version = "0.1.0"
+edition = "2021"
+authors = ["Nodirbek Ibragimov <n.ibragimov@jacobs-university.de>"]
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+libtock_platform = { path = "../../platform" }
+
+[dev-dependencies]
+libtock_unittest = { path = "../../unittest" }
