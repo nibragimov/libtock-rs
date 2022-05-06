@@ -1,4 +1,3 @@
-![Build Status](https://github.com/tock/libtock-rs/workflows/ci/badge.svg)
 
 # libtock-rs
 
@@ -6,9 +5,11 @@ Rust userland library for Tock
 
 ## Getting Started
 
-The experiments for thesis were run using microbit_v2 board. The apps that I worked on are rng, app_state located in libtock2/examples folder. 
+The experiments for thesis were run using microbit_v2 board, so you would need one to see them. Here are instructions to make them work:
 
-1.  Ensure you have [rustup](https://www.rustup.rs/) installed.
+1.  Ensure that you have flashed Tock kernel on your microbit_v2 board. If not, follow this [guide](https://github.com/tock/tock/tree/0e91e3ed8338b6b7dd0603c76a63afe25429febe/boards/microbit_v2).
+
+3.  Ensure you have [rustup](https://www.rustup.rs/) installed.
 
 1.  Clone the repository:
 
@@ -28,7 +29,7 @@ The experiments for thesis were run using microbit_v2 board. The apps that I wor
     ```bash
     make flash-microbit_v2 EXAMPLE=rng # Flash the example 'rng' program to microbit_v2 platform
     ```
-1.  Use `make` to run tests. Make sure you have rustc version 1.59.0 or higher:
+1.  Use `make` to run tests. Make sure you have rustc version [1.59.0 or higher](https://github.com/tock/libtock-rs/issues/394#issuecomment-1064336779):
     ```bash
     make test
     ```
@@ -42,7 +43,7 @@ Here are some pointers to better navigate project structure.
 - runtime/ - layouts for different boards and system call implementations for ARM and RISC-V architectures
 - syscall_tests/ - tests for system calls
 - unittest/ - fake kernel and driver(capsule) implementations
-- tock/ - submodule for Tock kernel (set on version release-2.0)
+- tock/ - submodule for Tock kernel (set to version release-2.0)
 
 ## Using libtock-rs
 
