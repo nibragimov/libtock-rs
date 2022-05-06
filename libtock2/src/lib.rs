@@ -1,4 +1,4 @@
-#![forbid(unsafe_code)]
+//#![forbid(unsafe_code)]
 #![no_std]
 
 extern crate libtock_debug_panic;
@@ -26,4 +26,8 @@ pub mod low_level_debug {
 pub mod rng {
     use libtock_rng as rng;
     pub type Rng = rng::Rng<super::runtime::TockSyscalls>;
+}
+pub mod app_state {
+    use libtock_app_state as app_state;
+    pub type AppState = app_state::AppState<u32, super::runtime::TockSyscalls>;
 }

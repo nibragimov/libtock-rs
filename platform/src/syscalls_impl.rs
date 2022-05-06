@@ -1,9 +1,9 @@
 //! Implements `Syscalls` for all types that implement `RawSyscalls`.
 
 use crate::{
-    allow_ro, allow_rw, exit_id, exit_on_drop, return_variant, share, subscribe, syscall_class,
-    yield_id, AllowRo, AllowRw, CommandReturn, ErrorCode, RawSyscalls, Register, ReturnVariant,
-    Subscribe, Syscalls, Upcall, YieldNoWaitReturn,
+    allow_ro, allow_rw, constants::memop_id, exit_id, exit_on_drop, return_variant, share,
+    subscribe, syscall_class, yield_id, AllowRo, AllowRw, CommandReturn, ErrorCode, RawSyscalls,
+    Register, ReturnVariant, Subscribe, Syscalls, Upcall, YieldNoWaitReturn,
 };
 
 impl<S: RawSyscalls> Syscalls for S {
@@ -349,6 +349,141 @@ impl<S: RawSyscalls> Syscalls for S {
                 0usize.into(),
                 0usize.into(),
             ]);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Memop
+    // -------------------------------------------------------------------------
+
+    fn memop_memory_begins_at() -> Result<*const u32, ErrorCode> {
+        unsafe {
+            let [r0, r1] = Self::syscall2::<{ syscall_class::MEMOP }>([
+                memop_id::MEMORY_START.into(),
+                0usize.into(),
+            ]);
+
+            let return_variant: ReturnVariant = r0.as_u32().into();
+
+            if return_variant == return_variant::SUCCESS_U32 {
+                Ok(<*const u32>::from(r1))
+            } else {
+                Err(ErrorCode::Fail)
+            }
+        }
+    }
+
+    fn memop_memory_ends_at() -> Result<*const u32, ErrorCode> {
+        unsafe {
+            let [r0, r1] = Self::syscall2::<{ syscall_class::MEMOP }>([
+                memop_id::MEMORY_END.into(),
+                0usize.into(),
+            ]);
+
+            let return_variant: ReturnVariant = r0.as_u32().into();
+
+            if return_variant == return_variant::SUCCESS_U32 {
+                Ok(<*const u32>::from(r1))
+            } else {
+                Err(ErrorCode::Fail)
+            }
+        }
+    }
+    fn memop_flash_begins_at() -> Result<*const u32, ErrorCode> {
+        unsafe {
+            let [r0, r1] = Self::syscall2::<{ syscall_class::MEMOP }>([
+                memop_id::FLASH_START.into(),
+                0usize.into(),
+            ]);
+
+            let return_variant: ReturnVariant = r0.as_u32().into();
+
+            if return_variant == return_variant::SUCCESS_U32 {
+                Ok(<*const u32>::from(r1))
+            } else {
+                Err(ErrorCode::Fail)
+            }
+        }
+    }
+    fn memop_flash_ends_at() -> Result<*const u32, ErrorCode> {
+        unsafe {
+            let [r0, r1] = Self::syscall2::<{ syscall_class::MEMOP }>([
+                memop_id::FLASH_END.into(),
+                0usize.into(),
+            ]);
+
+            let return_variant: ReturnVariant = r0.as_u32().into();
+
+            if return_variant == return_variant::SUCCESS_U32 {
+                Ok(<*const u32>::from(r1))
+            } else {
+                Err(ErrorCode::Fail)
+            }
+        }
+    }
+    fn memop_grant_begins_at() -> Result<*const u32, ErrorCode> {
+        unsafe {
+            let [r0, r1] = Self::syscall2::<{ syscall_class::MEMOP }>([
+                memop_id::GRANT_START.into(),
+                0usize.into(),
+            ]);
+
+            let return_variant: ReturnVariant = r0.as_u32().into();
+
+            if return_variant == return_variant::SUCCESS_U32 {
+                Ok(<*const u32>::from(r1))
+            } else {
+                Err(ErrorCode::Fail)
+            }
+        }
+    }
+    fn memop_number_writeable_flash_regions() -> Result<u32, ErrorCode> {
+        unsafe {
+            let [r0, r1] = Self::syscall2::<{ syscall_class::MEMOP }>([
+                memop_id::FLASH_REGIONS.into(),
+                0usize.into(),
+            ]);
+
+            let return_variant: ReturnVariant = r0.as_u32().into();
+
+            if return_variant == return_variant::SUCCESS_U32 {
+                Ok(r1.as_u32())
+            } else {
+                Err(ErrorCode::Fail)
+            }
+        }
+    }
+    fn memop_flash_region_begins_at(region_index: u32) -> Result<*const u32, ErrorCode> {
+        unsafe {
+            let [r0, r1] = Self::syscall2::<{ syscall_class::MEMOP }>([
+                memop_id::FLASH_REGIONS_START.into(),
+                region_index.into(),
+            ]);
+
+            let return_variant: ReturnVariant = r0.as_u32().into();
+
+            if return_variant == return_variant::SUCCESS_U32 {
+                Ok(<*const u32>::from(r1))
+            } else {
+                Err(ErrorCode::Fail)
+            }
+        }
+    }
+
+    fn memop_flash_region_ends_at(region_index: u32) -> Result<*const u32, ErrorCode>{
+        unsafe {
+            let [r0, r1] = Self::syscall2::<{ syscall_class::MEMOP }>([
+                memop_id::FLASH_REGIONS_END.into(),
+                region_index.into(),
+            ]);
+
+            let return_variant: ReturnVariant = r0.as_u32().into();
+            
+            if return_variant == return_variant::SUCCESS_U32 {
+                Ok(<*const u32>::from(r1))
+            } else {
+                Err(ErrorCode::Fail)
+            }
         }
     }
 

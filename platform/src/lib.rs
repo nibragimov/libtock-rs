@@ -21,7 +21,7 @@ mod yield_types;
 pub use allow_ro::AllowRo;
 pub use allow_rw::AllowRw;
 pub use command_return::CommandReturn;
-pub use constants::{exit_id, syscall_class, yield_id};
+pub use constants::{exit_id, syscall_class, yield_id, memop_id};
 pub use default_config::DefaultConfig;
 pub use error_code::ErrorCode;
 pub use raw_syscalls::RawSyscalls;

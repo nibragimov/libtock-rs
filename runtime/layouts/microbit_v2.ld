@@ -4,6 +4,6 @@ MEMORY {
   FLASH (X) : ORIGIN = 0x00040000, LENGTH = 256K
   RAM (W) : ORIGIN = 0x20004000, LENGTH = 112K
 }
-
-TBF_HEADER_SIZE = 0x48;
+/* Need to add entry in TBF header about writeable flash region */
+TBF_HEADER_SIZE = 0x50;
 INCLUDE libtock_layout.ld

@@ -21,7 +21,7 @@ impl<S: Syscalls, C: platform::allow_rw::Config + platform::subscribe::Config> R
         S::command(DRIVER_NUM, command::DRIVER_CHECK, 0, 0).is_success()
     }
 
-    // writes num random bytes to buffer, works sync
+    // synchronous function that writes 'num' random bytes to buffer
     pub fn gen(buffer: &mut [u8], num: u32) -> Result<(), ErrorCode> {
         if (buffer.len() as u32) < num {
             return Err(ErrorCode::BadRVal);
@@ -51,7 +51,8 @@ impl<S: Syscalls, C: platform::allow_rw::Config + platform::subscribe::Config> R
             Err(ErrorCode::Fail)
         })
     }
-
+    // asynchronous function that writes 'num' random bytes to buffer
+    // needs to be called inside share::scope function
     pub fn gen_async<'share>(
         callback: &'share Cell<Option<(u32,)>>,
         buffer: &'share mut [u8],

@@ -3,8 +3,9 @@
 
 use core::cell::Cell;
 use core::fmt::Write;
+use core::ptr;
+use libtock2::app_state::AppState;
 use libtock2::console::Console;
-use libtock2::rng::Rng;
 use libtock2::runtime::{set_main, stack_size};
 use libtock_platform::{share, ErrorCode};
 use numtoa::NumToA;
@@ -12,31 +13,34 @@ use numtoa::NumToA;
 set_main! {main}
 stack_size! {0x100}
 
-fn main() {
-    let mut buffer = [0u8; 3];
-    let mut writer = Console::writer();
-    let mut num_buffer = [0u8; 10];
-    let num: u32 = (buffer.len()) as u32;
+fn try_run(ram_ptr: *mut u32) -> Result<(), ErrorCode> {
+    AppState::save_sync(ram_ptr)?;
+    unsafe {
+        AppState::load_sync(ram_ptr)?;
+    }
+    Ok(())
+}
 
-    if !Rng::driver_check() {
+fn main() {
+    let mut writer = Console::writer();
+    let mut num = 42u32;
+    let mut num_buffer = [0u8; 10];
+    let ram_ptr: *mut u32 = &mut num as *mut u32;
+
+    let size = core::mem::size_of::<u32>();
+    let callback = Cell::new(Option::<(u32,)>::None);
+
+    // driver check fails, non-volatile storage driver is not working
+    if !AppState::driver_check() {
         writeln!(writer, "Driver not supported").unwrap();
         return;
     }
 
-    let ret = Rng::gen(&mut buffer, num);
-
-    // use async call to generate numbers
-    //
-    // let callback = Cell::new(Option::<(u32,)>::None);
-    // let ret = share::scope(|handle| {
-    //     Rng::gen_async(&callback, &mut buffer, handle, num)?;
-    //     Rng::_yield(&callback)?;
-    //     Ok(())
-    // });
-
+    let ret = try_run(ram_ptr);
+    
     // error handling
     if let Err(e) = ret {
-        writeln!(writer, "Error during generation: ").unwrap();
+        writeln!(writer, "Error: ").unwrap();
         if let Some(s) = as_str(e) {
             writeln!(writer, "{}", s).unwrap();
         } else {
@@ -45,11 +49,9 @@ fn main() {
         return;
     }
 
-    writeln!(writer, "Random nums generated: ").unwrap();
-    for x in &buffer {
-        let n = (*x).numtoa_str(10, &mut num_buffer);
-        writeln!(writer, "{}", n).unwrap();
-    }
+    let x: u32 = unsafe { ptr::read(ram_ptr) };
+    let n = x.numtoa_str(10, &mut num_buffer);
+    writeln!(writer, "{}", n).unwrap();
 }
 
 fn as_str(e: ErrorCode) -> Option<&'static str> {

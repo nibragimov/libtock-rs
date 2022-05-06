@@ -35,7 +35,7 @@ unsafe impl RawSyscalls for crate::fake::Syscalls {
     unsafe fn syscall2<const CLASS: usize>([r0, r1]: [Register; 2]) -> [Register; 2] {
         crate::fake::syscalls::assert_valid((r0, r1));
         match CLASS {
-            syscall_class::MEMOP => unimplemented!("TODO: Add Memop"),
+            syscall_class::MEMOP => super::memop_impl::memop(r0, r1),
             syscall_class::EXIT => super::exit_impl::exit(r0, r1),
             _ => panic!("Unknown syscall2 call. Class: {}", CLASS),
         }

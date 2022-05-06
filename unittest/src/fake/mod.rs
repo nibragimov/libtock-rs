@@ -16,6 +16,7 @@ mod kernel;
 mod leds;
 mod low_level_debug;
 mod rng;
+mod app_state;
 mod syscall_driver;
 mod syscalls;
 
@@ -26,6 +27,7 @@ pub use kernel::Kernel;
 pub use leds::Leds;
 pub use low_level_debug::{LowLevelDebug, Message};
 pub use rng::Rng;
+pub use app_state::AppState;
 pub use syscall_driver::SyscallDriver;
 pub use syscalls::Syscalls;
 

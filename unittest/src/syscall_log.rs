@@ -43,6 +43,13 @@ pub enum SyscallLogEntry {
         buffer_num: u32,
         len: usize,
     },
-    // TODO: Add Memop.
+
+    // -------------------------------------------------------------------------
+    // Memop
+    // -------------------------------------------------------------------------
+    Memop {
+        operation_id: u32,
+        operation_arg: u32,
+    },
     // TODO: Add Exit.
 }

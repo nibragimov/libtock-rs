@@ -73,6 +73,14 @@ SECTIONS {
         *(.start)
     } > FLASH
 
+
+    /* App state section - writeable flash region for app_state_driver */
+    /* Copied from libtock-c */
+    .wfr.app_state : {
+        KEEP(*(.app_state))
+        . = ALIGN(4); /* Make sure we're word-aligned here */
+    } > FLASH     
+
     /* Text section -- the application's code. */
     .text ALIGN(4) : {
         *(.text.*)
@@ -86,6 +94,7 @@ SECTIONS {
          */
         _data_flash_start = .;
     } > FLASH
+    
 
     /* Sections located in RAM at runtime.
      */

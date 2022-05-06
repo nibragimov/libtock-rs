@@ -77,7 +77,18 @@ pub trait Syscalls: RawSyscalls + Sized {
     /// `unallow_ro` does nothing.
     fn unallow_ro(driver_num: u32, buffer_num: u32);
 
-    // TODO: Add memop() methods.
+    // -------------------------------------------------------------------------
+    // Memop
+    // -------------------------------------------------------------------------
+    // Memop system calls query different sections in address space
+    fn memop_memory_begins_at() -> Result<*const u32, ErrorCode>;
+    fn memop_memory_ends_at() -> Result<*const u32, ErrorCode>;
+    fn memop_flash_begins_at() -> Result<*const u32, ErrorCode>;
+    fn memop_flash_ends_at() -> Result<*const u32, ErrorCode>;
+    fn memop_grant_begins_at() -> Result<*const u32, ErrorCode>;
+    fn memop_number_writeable_flash_regions() -> Result<u32, ErrorCode>;
+    fn memop_flash_region_begins_at(region_index: u32) -> Result<*const u32, ErrorCode>;
+    fn memop_flash_region_ends_at(region_index: u32) -> Result<*const u32, ErrorCode>;
 
     // -------------------------------------------------------------------------
     // Exit

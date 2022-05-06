@@ -116,7 +116,9 @@ pub struct OutFiles {
 // The amount of space to reserve for the TBF header. This must match the
 // TBF_HEADER_SIZE value in the layout file for the platform, which is currently
 // 0x48 for all platforms.
-const TBF_HEADER_SIZE: u32 = 0x48;
+
+/* the value should match the one from linker script of the board */
+const TBF_HEADER_SIZE: u32 = 0x50;
 
 // Reads the stack size, and returns it as a String for use on elf2tab's command
 // line.

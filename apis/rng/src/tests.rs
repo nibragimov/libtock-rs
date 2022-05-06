@@ -17,9 +17,11 @@ fn driver_check() {
     kernel.add_driver(&driver);
 
     assert!(Rng::driver_check());
-    //assert_eq!(Rng.take_messages(), []);
+    assert_eq!(driver.take_bytes(), []);
 }
 
+// we only check buffer write
+// randomness is checked in capsule tests
 #[test]
 fn gen_bytes() {
     let kernel = fake::Kernel::new();
