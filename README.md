@@ -34,7 +34,7 @@ The experiments for thesis were run using microbit_v2 board, so you would need o
     make test
     ```
 ## Project structure 
-Here are some pointers to better navigate project structure.
+Here are some folder pointers to better navigate project structure.
 
 - libtock2/examples - location of Tock apps
 - apis/ - userspace libraries
