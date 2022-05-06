@@ -71,15 +71,10 @@ impl crate::fake::SyscallDriver for Rng {
     }
 }
 
-//#[cfg(test)]
 
-//mod tests;
 const DRIVER_NUM: u32 = 0x40001;
-
 // Command numbers
 const DRIVER_CHECK: u32 = 0;
 const GEN: u32 = 1;
-//const READ: u32 = 2;
-//const ABORT: u32 = 3;
 const SUBSCRIBE_GEN: u32 = 0;
 const ALLOW_GEN: u32 = 0;

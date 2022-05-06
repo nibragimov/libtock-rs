@@ -355,7 +355,8 @@ impl<S: RawSyscalls> Syscalls for S {
     // -------------------------------------------------------------------------
     // Memop
     // -------------------------------------------------------------------------
-
+    // we are exposing memop system calls with memop_id in range [3, 9]
+    // signature of memop system calls is from TRD 104 [https://github.com/tock/tock/blob/master/doc/reference/trd104-syscalls.md]
     fn memop_memory_begins_at() -> Result<*const u32, ErrorCode> {
         unsafe {
             let [r0, r1] = Self::syscall2::<{ syscall_class::MEMOP }>([
@@ -470,7 +471,7 @@ impl<S: RawSyscalls> Syscalls for S {
         }
     }
 
-    fn memop_flash_region_ends_at(region_index: u32) -> Result<*const u32, ErrorCode>{
+    fn memop_flash_region_ends_at(region_index: u32) -> Result<*const u32, ErrorCode> {
         unsafe {
             let [r0, r1] = Self::syscall2::<{ syscall_class::MEMOP }>([
                 memop_id::FLASH_REGIONS_END.into(),
@@ -478,7 +479,7 @@ impl<S: RawSyscalls> Syscalls for S {
             ]);
 
             let return_variant: ReturnVariant = r0.as_u32().into();
-            
+
             if return_variant == return_variant::SUCCESS_U32 {
                 Ok(<*const u32>::from(r1))
             } else {

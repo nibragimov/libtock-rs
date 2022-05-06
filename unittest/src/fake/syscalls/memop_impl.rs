@@ -1,8 +1,9 @@
 use crate::kernel_data::with_kernel_data;
-use crate::{command_return, ExpectedSyscall, SyscallLogEntry};
+use crate::{ExpectedSyscall, SyscallLogEntry};
 use core::ptr;
 use libtock_platform::{return_variant, Register};
 
+// fake memop system call
 pub(super) fn memop(op_id: Register, op_arg: Register) -> [Register; 2] {
     let operation_id = op_id.try_into().expect("Too large operation ID");
     let operation_arg = op_arg.try_into().expect("Too large operation argument");
@@ -39,7 +40,7 @@ pub(super) fn memop(op_id: Register, op_arg: Register) -> [Register; 2] {
 
         override_return
     });
-
+    // the fake memop implementation was only used to test app_state driver
     let return_variant: u32 = return_variant::SUCCESS_U32.into();
     let res: *const u32 = match override_return {
         Some(val) => val,
@@ -52,16 +53,13 @@ pub(super) fn memop(op_id: Register, op_arg: Register) -> [Register; 2] {
             memop_id::FLASH_REGIONS => {
                 let n = FLASH_REGION_NUM;
                 return [return_variant.into(), n.into()];
-            },
+            }
             memop_id::FLASH_REGIONS_START => {
                 unsafe {
                     let flash_addr = &mut FLASH_BUFFER as *mut u8 as *mut u32;
                     // assert_eq!((flash_addr as u32) as usize, flash_addr as usize);
                     // assertion works for usize
-                    assert_eq!(
-                        ptr::read(flash_addr as usize as *const u32),
-                        0
-                    );
+                    assert_eq!(ptr::read(flash_addr as usize as *const u32), 0);
                     flash_addr
                 }
             }
@@ -75,7 +73,6 @@ pub(super) fn memop(op_id: Register, op_arg: Register) -> [Register; 2] {
 
 static mut FLASH_BUFFER: [u8; 20] = [0u8; 20];
 const FLASH_REGION_NUM: usize = 1;
-static mut FLASH_REGION_START: u32 = 0x11000;
 mod memop_id {
     pub const MEMORY_START: u32 = 2;
     pub const MEMORY_END: u32 = 3;
@@ -93,6 +90,5 @@ mod dummy_addresses {
     pub const FLASH_START: *const u32 = 0x10000 as *const u32;
     pub const FLASH_END: *const u32 = 0x14000 as *const u32;
     pub const GRANT_START: *const u32 = 0x21c00 as *const u32;
-    //pub const FLASH_REGION_START: *const u32 = 0x11000 as *const u32;
     pub const FLASH_REGION_END: *const u32 = 0x13000 as *const u32;
 }
