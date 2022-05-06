@@ -6,7 +6,7 @@ Rust userland library for Tock
 
 ## Getting Started
 
-The experiments for thesis were run using microbit_v2 board. The apps that I worked on are rng, app_state located in libtock2/examples folder.
+The experiments for thesis were run using microbit_v2 board. The apps that I worked on are rng, app_state located in libtock2/examples folder. 
 
 1.  Ensure you have [rustup](https://www.rustup.rs/) installed.
 
@@ -35,14 +35,14 @@ The experiments for thesis were run using microbit_v2 board. The apps that I wor
 ## Project structure 
 Here are some pointers to better navigate project structure.
 
-libtock2/examples - location of Tock apps
-apis/ - userspace libraries
-platform/ - system call interfaces
-runner/ - runner CLI app that is used to help building executables and passing to tockloader
-runtime/ - layouts for different boards and system call implementations for ARM and RISC-V architectures
-syscall_tests/ - tests for system calls
-unittest/ - fake kernel and driver(capsule) implementations
-tock/ - submodule for Tock kernel (set on version release-2.0)
+- libtock2/examples - location of Tock apps
+- apis/ - userspace libraries
+- platform/ - system call interfaces
+- runner/ - runner CLI app that is used to help building executables and passing to tockloader
+- runtime/ - layouts for different boards and system call implementations for ARM and RISC-V architectures
+- syscall_tests/ - tests for system calls
+- unittest/ - fake kernel and driver(capsule) implementations
+- tock/ - submodule for Tock kernel (set on version release-2.0)
 
 ## Using libtock-rs
 
