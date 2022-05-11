@@ -1,9 +1,9 @@
 // fake implementation of app_state driver
-use core::cell::Cell;
-use libtock_platform::{CommandReturn, ErrorCode};
-use crate::RoAllowBuffer;
 use crate::upcall;
+use crate::RoAllowBuffer;
+use core::cell::Cell;
 use core::ptr;
+use libtock_platform::{CommandReturn, ErrorCode};
 
 pub struct AppState {
     flash_ptr: Cell<u32>,
@@ -11,7 +11,7 @@ pub struct AppState {
     flash_buffer: Cell<Vec<u8>>,
     buffer: Cell<RoAllowBuffer>,
 }
-impl AppState{
+impl AppState {
     pub fn new() -> std::rc::Rc<AppState> {
         std::rc::Rc::new(AppState {
             flash_ptr: Default::default(),
@@ -30,7 +30,7 @@ impl AppState{
     }
 }
 
-impl crate::fake::SyscallDriver for AppState { 
+impl crate::fake::SyscallDriver for AppState {
     fn id(&self) -> u32 {
         DRIVER_NUM
     }
@@ -48,7 +48,6 @@ impl crate::fake::SyscallDriver for AppState {
         } else {
             Err((buffer, ErrorCode::Invalid))
         }
-        
     }
     // write from ram(buffer) to flash_addr as arg0
     // for command we can just copy ram to flash
@@ -56,22 +55,21 @@ impl crate::fake::SyscallDriver for AppState {
         match command_id {
             DRIVER_CHECK => {}
             WRITE_FLASH => {
-                
-                self.flash_ptr.set(argument0);     
+                self.flash_ptr.set(argument0);
                 let flash_ptr = self.flash_ptr.as_ptr();
-               
-                let mut flash_buffer = vec![];    
+
+                let mut flash_buffer = vec![];
                 let buffer = self.buffer.take();
                 let size = buffer.len();
                 flash_buffer.extend_from_slice(&(*buffer)[..size]);
-                
-                unsafe{
+
+                unsafe {
                     ptr::copy((&mut flash_buffer).as_ptr(), flash_ptr as *mut u8, size);
                 }
 
                 self.buffer.set(buffer);
                 self.flash_buffer.set(flash_buffer);
-                
+
                 upcall::schedule(DRIVER_NUM, SUBSCRIBE_WRITE, (size as u32, 0, 0))
                     .expect("Unable to schedule upcall {}");
             }

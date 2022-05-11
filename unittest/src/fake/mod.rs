@@ -9,6 +9,7 @@
 //! `use libtock_unittest::fake` and refer to the type with the `fake::` prefix
 //! (e.g. `fake::Console`).
 
+mod app_state;
 mod buttons;
 mod console;
 mod gpio;
@@ -16,10 +17,10 @@ mod kernel;
 mod leds;
 mod low_level_debug;
 mod rng;
-mod app_state;
 mod syscall_driver;
 mod syscalls;
 
+pub use app_state::AppState;
 pub use buttons::Buttons;
 pub use console::Console;
 pub use gpio::{Gpio, GpioMode, InterruptEdge, PullMode};
@@ -27,7 +28,6 @@ pub use kernel::Kernel;
 pub use leds::Leds;
 pub use low_level_debug::{LowLevelDebug, Message};
 pub use rng::Rng;
-pub use app_state::AppState;
 pub use syscall_driver::SyscallDriver;
 pub use syscalls::Syscalls;
 

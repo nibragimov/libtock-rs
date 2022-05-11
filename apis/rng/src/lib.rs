@@ -70,14 +70,6 @@ impl<S: Syscalls, C: platform::allow_rw::Config + platform::subscribe::Config> R
 
         S::command(DRIVER_NUM, command::GEN, num, 0).to_result::<(), ErrorCode>()
     }
-
-    pub fn _yield<'share>(callback: &'share Cell<Option<(u32,)>>) -> Result<(), ErrorCode> {
-        S::yield_wait();
-        match (*callback).get() {
-            Some((_,)) => Ok(()),
-            _ => Err(ErrorCode::Fail),
-        }
-    }
 }
 
 #[cfg(test)]

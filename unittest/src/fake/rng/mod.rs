@@ -71,7 +71,6 @@ impl crate::fake::SyscallDriver for Rng {
     }
 }
 
-
 const DRIVER_NUM: u32 = 0x40001;
 // Command numbers
 const DRIVER_CHECK: u32 = 0;

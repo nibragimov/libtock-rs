@@ -5,10 +5,11 @@ use core::cell::Cell;
 use core::fmt::Write;
 use libtock2::console::Console;
 use libtock2::rng::Rng;
+use libtock2::runtime::TockSyscalls;
 use libtock2::runtime::{set_main, stack_size};
+use libtock_platform::Syscalls;
 use libtock_platform::{share, ErrorCode};
 use numtoa::NumToA;
-
 set_main! {main}
 stack_size! {0x100}
 
@@ -30,8 +31,12 @@ fn main() {
     // let callback = Cell::new(Option::<(u32,)>::None);
     // let ret = share::scope(|handle| {
     //     Rng::gen_async(&callback, &mut buffer, handle, num)?;
-    //     Rng::_yield(&callback)?;
-    //     Ok(())
+
+    //     TockSyscalls::yield_wait();
+    //     match callback.get() {
+    //         Some((_,)) => Ok(()),
+    //         _ => Err(ErrorCode::Fail),
+    //     }
     // });
 
     // error handling

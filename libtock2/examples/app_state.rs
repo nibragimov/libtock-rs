@@ -37,7 +37,7 @@ fn main() {
     }
 
     let ret = try_run(ram_ptr);
-    
+
     // error handling
     if let Err(e) = ret {
         writeln!(writer, "Error: ").unwrap();

@@ -28,12 +28,9 @@ pub struct AppState<
 impl<S: Syscalls, C: platform::allow_ro::Config + platform::subscribe::Config, T: Sized>
     AppState<T, S, C>
 {
-    // the app_flash driver capsule invokes the non-volatile storage driver to write data to flash
-    // thus need to check both drivers
     #[inline(always)]
     pub fn driver_check() -> bool {
-        let ret = S::command(DRIVER_NUM, command::DRIVER_CHECK, 0, 0).is_success()
-            & S::command(NVM_STORAGE_NUM, command::DRIVER_CHECK, 0, 0).is_success();
+        let ret = S::command(DRIVER_NUM, command::DRIVER_CHECK, 0, 0).is_success();
         ret
     }
 
@@ -104,6 +101,7 @@ impl<S: Syscalls, C: platform::allow_ro::Config + platform::subscribe::Config, T
 
                 // if we run tests, we get lossy cast from 64 bit address to 32 bit number, which may explain why the tests fail the save
                 unsafe {
+                    assert_eq!(FLASH_PTR as usize as u32, FLASH_PTR as u32);
                     S::command(DRIVER_NUM, command::WRITE_FLASH, FLASH_PTR as u32, 0)
                         .to_result()?;
                 }
@@ -126,21 +124,11 @@ impl<S: Syscalls, C: platform::allow_ro::Config + platform::subscribe::Config, T
         ptr::write_unaligned(ram_ptr, ptr::read(FLASH_PTR as *mut T));
         Ok(())
     }
-
-    // wait for asynchronous functions to finish
-    pub fn _yield<'share>(callback: &'share Cell<Option<(u32,)>>) -> Result<(), ErrorCode> {
-        S::yield_wait();
-        match (*callback).get() {
-            Some((_,)) => Ok(()),
-            _ => Err(ErrorCode::Fail),
-        }
-    }
 }
 
 #[cfg(test)]
 mod tests;
 const DRIVER_NUM: u32 = 0x50000;
-const NVM_STORAGE_NUM: u32 = 0x50001;
 
 // Command IDs
 #[allow(unused)]
