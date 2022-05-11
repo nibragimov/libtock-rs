@@ -5,7 +5,7 @@ Rust userland library for Tock
 
 ## Getting Started
 
-The experiments for thesis were run using microbit_v2 board, so you would need one to see them. Here are instructions to make them work:
+The experiments for thesis were run using BBC micro:bit board v2.20 (microbit_v2) board, so you would need one to see them. Here are instructions to make them work:
 
 1.  Ensure that you have flashed Tock kernel on your microbit_v2 board. If not, follow this [guide](https://github.com/tock/tock/tree/0e91e3ed8338b6b7dd0603c76a63afe25429febe/boards/microbit_v2).
 
