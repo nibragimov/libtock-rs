@@ -33,7 +33,7 @@ The experiments for thesis were run using BBC micro:bit board v2.20 (microbit_v2
     ```bash
     make test
     ```
-    The test script will do following things: run the tests in normal mode, check the code formatting using ```cargo fmt --check```, run the linter clippy for different target platforms, and run tests in Miri. Miri helps to detect classes of undefined behavior and memory leaked, for more information visit [Miri project page](https://github.com/rust-lang/miri)  
+    The test script will do following things: run the tests in normal mode, check the code formatting using ```cargo fmt --check```, run the linter clippy for different target platforms, and run tests in Miri. Miri helps to detect classes of undefined behavior and memory leaks, for more information visit [Miri project page](https://github.com/rust-lang/miri)  
 ## Project structure 
 Here are some folder pointers to better navigate project structure.
 
