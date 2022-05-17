@@ -70,10 +70,10 @@ pub enum ExpectedSyscall {
         // invoked and the provided error will be returned instead.
         return_error: Option<libtock_platform::ErrorCode>,
     },
+
     // -------------------------------------------------------------------------
     // Memop
     // -------------------------------------------------------------------------
-    // TODO: Add Memop.
     Memop {
         operation_id: u32,
         operation_arg: u32,

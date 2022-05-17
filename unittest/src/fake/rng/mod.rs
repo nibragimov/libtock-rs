@@ -1,4 +1,5 @@
 // fake implementation of random number generator (RNG)
+// was inspired from fake implementations of Console
 use core::cell::Cell;
 use core::cmp;
 use libtock_platform::{CommandReturn, ErrorCode};
@@ -25,15 +26,17 @@ impl Rng {
         self.messages.take()
     }
 }
-
+// the fake implementation of rng driver
 impl crate::fake::SyscallDriver for Rng {
     fn id(&self) -> u32 {
         DRIVER_NUM
     }
+    // returns the max number of upcalls allowed,
+    // more upcalls will result in a error from fake kernel
     fn num_upcalls(&self) -> u32 {
         2
     }
-
+    // fake driver saves the buffer passed
     fn allow_readwrite(
         &self,
         buffer_num: u32,
@@ -46,7 +49,7 @@ impl crate::fake::SyscallDriver for Rng {
         }
     }
 
-    // fill with 12s buffer[..size]
+    // fake driver fills the buffer with 12s
     fn command(&self, command_num: u32, argument0: u32, _argument1: u32) -> CommandReturn {
         match command_num {
             DRIVER_CHECK => {}

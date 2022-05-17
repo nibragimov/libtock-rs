@@ -1,6 +1,8 @@
 use libtock_platform::memop_id;
 use libtock_platform::Syscalls;
 use libtock_unittest::{fake, ExpectedSyscall, SyscallLogEntry};
+// Tests for the Memop system call implementation in
+// `libtock_platform::Syscalls`.
 
 #[test]
 fn memop_memory_begins_at() {
@@ -170,6 +172,7 @@ fn memop_flash_region_ends_at() {
     );
 }
 
+// Dummy variables used to test memop system call
 const NUM_WRITEABLE_REGIONS: u32 = 2;
 mod dummy_addresses {
     pub const MEM_START: *const u32 = 0x20000 as *const u32;

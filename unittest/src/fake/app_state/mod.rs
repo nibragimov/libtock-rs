@@ -37,7 +37,7 @@ impl crate::fake::SyscallDriver for AppState {
     fn num_upcalls(&self) -> u32 {
         2
     }
-
+    // fake driver saves the buffer passed
     fn allow_readonly(
         &self,
         buffer_num: u32,
@@ -49,8 +49,8 @@ impl crate::fake::SyscallDriver for AppState {
             Err((buffer, ErrorCode::Invalid))
         }
     }
-    // write from ram(buffer) to flash_addr as arg0
-    // for command we can just copy ram to flash
+    // fake driver copies stored buffer to data pointed by flash pointer
+    // the argument0 is pointer to flash region as 32-bit integer
     fn command(&self, command_id: u32, argument0: u32, _argument1: u32) -> CommandReturn {
         match command_id {
             DRIVER_CHECK => {}

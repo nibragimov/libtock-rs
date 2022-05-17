@@ -3,6 +3,7 @@
 
 use core::cell::Cell;
 use core::fmt::Write;
+use core::panic;
 use libtock2::console::Console;
 use libtock2::rng::Rng;
 use libtock2::runtime::TockSyscalls;
@@ -19,27 +20,31 @@ fn main() {
     let mut num_buffer = [0u8; 10];
     let num: u32 = (buffer.len()) as u32;
 
+    // check if the driver is supported by the board
     if !Rng::driver_check() {
         writeln!(writer, "Driver not supported").unwrap();
         return;
     }
 
-    let ret = Rng::gen(&mut buffer, num);
+    // Call rng synchronously (commented out)
+    // let ret = Rng::gen(&mut buffer, num);
 
-    // use async call to generate numbers
+    // using asynchronous API to generate numbers
     //
-    // let callback = Cell::new(Option::<(u32,)>::None);
-    // let ret = share::scope(|handle| {
-    //     Rng::gen_async(&callback, &mut buffer, handle, num)?;
+    // the callback is of the type that implements Upcall trait
+    let callback = Cell::new(Option::<(u32,)>::None);
+    let ret = share::scope(|handle| {
+        Rng::gen_async(&callback, &mut buffer, handle, num)?;
+        // waits for the function Rng::gen_async() to finish
+        TockSyscalls::yield_wait();
+        // check if upcall was invoked
+        match callback.get() {
+            Some((_,)) => Ok(()),
+            _ => Err(ErrorCode::Fail),
+        }
+    });
 
-    //     TockSyscalls::yield_wait();
-    //     match callback.get() {
-    //         Some((_,)) => Ok(()),
-    //         _ => Err(ErrorCode::Fail),
-    //     }
-    // });
-
-    // error handling
+    // error handling code
     if let Err(e) = ret {
         writeln!(writer, "Error during generation: ").unwrap();
         if let Some(s) = as_str(e) {
@@ -52,11 +57,13 @@ fn main() {
 
     writeln!(writer, "Random nums generated: ").unwrap();
     for x in &buffer {
+        // numtoa helps to print numbers
         let n = (*x).numtoa_str(10, &mut num_buffer);
         writeln!(writer, "{}", n).unwrap();
     }
 }
-
+// helper function for error-handling, maps ErrorCode values to strings
+// for printing on the console
 fn as_str(e: ErrorCode) -> Option<&'static str> {
     match e {
         ErrorCode::Fail => Some("FAIL"),

@@ -80,14 +80,24 @@ pub trait Syscalls: RawSyscalls + Sized {
     // -------------------------------------------------------------------------
     // Memop
     // -------------------------------------------------------------------------
+
     // Memop system calls query different sections in address space
+
+    /// Get process RAM start address
     fn memop_memory_begins_at() -> Result<*const u32, ErrorCode>;
+    /// Get address immediately after process RAM allocation
     fn memop_memory_ends_at() -> Result<*const u32, ErrorCode>;
+    /// Get process flash start address
     fn memop_flash_begins_at() -> Result<*const u32, ErrorCode>;
+    /// Get address immediately after process flash region
     fn memop_flash_ends_at() -> Result<*const u32, ErrorCode>;
+    /// Get lowest address (end) of the grant region
     fn memop_grant_begins_at() -> Result<*const u32, ErrorCode>;
+    /// Get number of writeable flash regions in process header
     fn memop_number_writeable_flash_regions() -> Result<u32, ErrorCode>;
+    /// Get start address of a writeable flash region
     fn memop_flash_region_begins_at(region_index: u32) -> Result<*const u32, ErrorCode>;
+    /// Get end address of a writeable flash region
     fn memop_flash_region_ends_at(region_index: u32) -> Result<*const u32, ErrorCode>;
 
     // -------------------------------------------------------------------------

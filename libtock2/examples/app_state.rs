@@ -13,6 +13,7 @@ use numtoa::NumToA;
 set_main! {main}
 stack_size! {0x100}
 
+// we use try_run for better error handling
 fn try_run(ram_ptr: *mut u32) -> Result<(), ErrorCode> {
     AppState::save_sync(ram_ptr)?;
     unsafe {
@@ -21,6 +22,7 @@ fn try_run(ram_ptr: *mut u32) -> Result<(), ErrorCode> {
     Ok(())
 }
 
+// the example app tries to write and read a 32-bit integer
 fn main() {
     let mut writer = Console::writer();
     let mut num = 42u32;
@@ -30,12 +32,12 @@ fn main() {
     let size = core::mem::size_of::<u32>();
     let callback = Cell::new(Option::<(u32,)>::None);
 
-    // driver check fails, non-volatile storage driver is not working
+    // check if the driver is supported by the board
     if !AppState::driver_check() {
         writeln!(writer, "Driver not supported").unwrap();
         return;
     }
-
+    // call save and load operations from app_state library
     let ret = try_run(ram_ptr);
 
     // error handling
@@ -49,11 +51,14 @@ fn main() {
         return;
     }
 
+    // read data from raw pointer ram_ptr
     let x: u32 = unsafe { ptr::read(ram_ptr) };
+    // numtoa helps to print numbers
     let n = x.numtoa_str(10, &mut num_buffer);
     writeln!(writer, "{}", n).unwrap();
 }
-
+// helper function for error-handling, maps ErrorCode values to strings
+// for printing on the console
 fn as_str(e: ErrorCode) -> Option<&'static str> {
     match e {
         ErrorCode::Fail => Some("FAIL"),

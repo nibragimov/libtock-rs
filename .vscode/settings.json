@@ -3,9 +3,9 @@
   "rust.all_targets": true,
   "rust.clippy_preference": "on",
   "editor.formatOnType": true,
-  "rust-analyzer.rustfmt.enableRangeFormatting": true,
   "[rust]": {
     "editor.defaultFormatter": "matklad.rust-analyzer",
     "editor.formatOnSave": true
   },
+  "rust-analyzer.rustfmt.rangeFormatting.enable": true,
 }

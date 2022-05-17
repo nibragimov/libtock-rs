@@ -9,14 +9,39 @@ use platform::{
     share::{self},
     DefaultConfig, ErrorCode, Syscalls,
 };
+/// The app_state driver library.
+///
+/// It passes the pointer to memory we want to save (ram pointer)
+/// converted as byte buffer to kernel.
+/// During save: It passes pointer to flash section (flash pointer), expecting kernel to
+/// copy data from ram pointer to flash pointer
+///
+/// During load: The data from flash pointer is copied to the input pointer
+///
+/// # Example
+/// ```ignore
+/// use libtock2::AppState;
+///
+/// // Fills buffer with random bytes
+/// let mut num = 42u32;
+/// let ram_ptr: *mut u32 = &mut num as *mut u32;
+/// AppState::save_sync(ram_ptr)?;
+/// unsafe {
+///     AppState::load_sync(ram_ptr)?;
+/// }
+///
+/// ```
 
 // we don't need to worry about data races as Tock operates on single thread
+// the INITED variable tells if AppState called init function
 static mut INITED: bool = false;
 
-// fill app_state section with enough space
+// fill app_state flash section with enough space
+// that is our persisten storage buffer
 #[no_mangle]
 #[link_section = ".app_state"]
 static mut FLASH_BUFFER: [u8; 20] = [0u8; 20];
+// raw pointer to flash section, initialized in init()
 static mut FLASH_PTR: *mut u32 = ptr::null_mut();
 
 pub struct AppState<
@@ -28,27 +53,34 @@ pub struct AppState<
 impl<S: Syscalls, C: platform::allow_ro::Config + platform::subscribe::Config, T: Sized>
     AppState<T, S, C>
 {
+    /// Run a check against the app_state capsule to ensure it is present.
+    ///
+    /// Returns `true` if the driver was present. This does not necessarily mean
+    /// that the driver is working, as it may still fail to allocate grant
+    /// memory.
     #[inline(always)]
     pub fn driver_check() -> bool {
         let ret = S::command(DRIVER_NUM, command::DRIVER_CHECK, 0, 0).is_success();
         ret
     }
 
+    // initializes FLASH_PTR
     pub fn init(ram_ptr: *mut T) -> Result<(), ErrorCode> {
         // convert raw pointer to byte buffer reference
         let ram_buffer =
             unsafe { core::slice::from_raw_parts(ram_ptr as *const u8, core::mem::size_of::<T>()) };
         share::scope::<(AllowRo<_, DRIVER_NUM, { allow_ro::WRITE_FLASH }>,), _, _>(|handle| {
             let (allow_ro,) = handle.split();
-
+            // share the byte buffer with kernel
             S::allow_ro::<C, DRIVER_NUM, { allow_ro::WRITE_FLASH }>(allow_ro, ram_buffer)?;
 
+            // get the number of writeable flash regions
             let n = S::memop_number_writeable_flash_regions()?;
             if n == 0 {
                 return Err(ErrorCode::NoMem);
             }
 
-            //flash_buffer_raw = flash_buffer.as_mut_ptr();
+            // assign the address of first writeable flash region to FLASH_PTR
             unsafe {
                 FLASH_PTR = S::memop_flash_region_begins_at(0)? as *mut u32;
                 INITED = true;
@@ -83,8 +115,11 @@ impl<S: Syscalls, C: platform::allow_ro::Config + platform::subscribe::Config, T
         }
         Ok(())
     }
+
     // Write flash memory fails because non-volatile storage driver is not working
+    // save function can be called if the init function has not been
     pub fn save_sync(ram_ptr: *mut T) -> Result<(), ErrorCode> {
+        // the operation should guarantee init() was run beforehand
         unsafe {
             if !INITED {
                 AppState::<T, S, C>::init(ram_ptr)?;
@@ -99,9 +134,9 @@ impl<S: Syscalls, C: platform::allow_ro::Config + platform::subscribe::Config, T
                     subscribe, &called,
                 )?;
 
-                // if we run tests, we get lossy cast from 64 bit address to 32 bit number, which may explain why the tests fail the save
+                // if we run tests, we get lossy cast from 64 bit address to 32 bit number
+                // the source of problem for tests
                 unsafe {
-                    assert_eq!(FLASH_PTR as usize as u32, FLASH_PTR as u32);
                     S::command(DRIVER_NUM, command::WRITE_FLASH, FLASH_PTR as u32, 0)
                         .to_result()?;
                 }
@@ -115,16 +150,21 @@ impl<S: Syscalls, C: platform::allow_ro::Config + platform::subscribe::Config, T
 
         ret
     }
-
+    // loads the ram_ptr with FLASH_PTR, no asynchronous funciton
     pub unsafe fn load_sync(ram_ptr: *mut T) -> Result<(), ErrorCode> {
+        // the operation should guarantee init() was run beforehand
         if !INITED {
             AppState::<T, S, C>::init(ram_ptr)?;
         }
-
+        // write to ram_ptr the data pointed by FLASH_PTR
         ptr::write_unaligned(ram_ptr, ptr::read(FLASH_PTR as *mut T));
         Ok(())
     }
 }
+
+// -----------------------------------------------------------------------------
+// Driver number and command IDs
+// -----------------------------------------------------------------------------
 
 #[cfg(test)]
 mod tests;

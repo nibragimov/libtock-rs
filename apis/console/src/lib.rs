@@ -8,7 +8,7 @@ use libtock_platform::share;
 use libtock_platform::subscribe::Subscribe;
 use libtock_platform::{DefaultConfig, ErrorCode, Syscalls};
 
-/// The console driver.
+/// The console driver library.
 ///
 /// It allows libraries to pass strings to the kernel's console driver.
 ///

@@ -4,12 +4,13 @@ use libtock_unittest::{command_return, fake, ExpectedSyscall};
 
 type Rng = super::Rng<fake::Syscalls>;
 
+// test if the driver is present
 #[test]
 fn no_driver() {
     let _kernel = fake::Kernel::new();
     assert!(!Rng::driver_check());
 }
-
+// checking the fields in the driver
 #[test]
 fn driver_check() {
     let kernel = fake::Kernel::new();
@@ -22,6 +23,7 @@ fn driver_check() {
 
 // we only check buffer write
 // randomness is checked in capsule tests
+// test asynchronous API for rng library
 #[test]
 fn gen_bytes() {
     let kernel = fake::Kernel::new();
@@ -33,6 +35,7 @@ fn gen_bytes() {
     Rng::gen(&mut buffer, num).unwrap();
     assert_eq!(driver.take_bytes(), [12, 12, 12, 12]);
 }
+// test asynchronous API for rng library
 #[test]
 fn gen_bytes_async() {
     let kernel = fake::Kernel::new();
@@ -52,6 +55,7 @@ fn gen_bytes_async() {
     assert_eq!(driver.take_bytes(), [12, 12, 12, 12]);
 }
 
+// test multiple async requests within one share::scope()
 #[test]
 fn gen_bytes_async_mult() {
     let kernel = fake::Kernel::new();
@@ -77,6 +81,8 @@ fn gen_bytes_async_mult() {
     assert_eq!(buffer2, [12, 12, 12]);
     assert_eq!(buffer, [12, 12, 12, 12]);
 }
+// override the return value of system call, to engineer a failure
+// the Errorcode of failure is checked
 #[test]
 fn failed_gen() {
     let kernel = fake::Kernel::new();
@@ -108,6 +114,8 @@ fn failed_gen() {
     assert_eq!(driver.take_bytes(), [12, 12, 12, 12]);
 }
 
+// test if the num is bigger than buffer size
+// check the ErrorCode
 #[test]
 fn small_buffer() {
     let kernel = fake::Kernel::new();
