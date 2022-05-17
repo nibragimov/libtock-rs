@@ -45,6 +45,20 @@ Here are some folder pointers to better navigate project structure.
 - syscall_tests/ - tests for system calls
 - unittest/ - fake kernel and driver(capsule) implementations
 - tock/ - submodule for Tock kernel (set to version release-2.0)
+## Our work
+
+- apis/rng - rng library (with tests)
+- apis/app\_state - app\_state library (with tests)
+- libtock2/examples/rng.rs - example application using rng library
+- libtock2/examples/app\_state.rs - example application using app\_state library
+- platform/src/syscalls.rs - declaration of memop system call
+- platform/src/syscalls\_impl.rs - implementation of memop system call
+- runtime/libtock\_layout.ld - process layout of libtock-rs application
+- runtime/layouts/microbit\_v2.ld - layout for microbit board
+- unittest/src/fake/app\_state - fake implementation of app\_state driver
+- unittest/src/fake/rng - fake implementation of rng driver, used in tests
+- unittest/src/fake/app\_state - fake implementation of app\_state driver, used in tests
+- syscalls\_tests/src/memop.rs - tests for system call memop
 
 ## Using libtock-rs
 
