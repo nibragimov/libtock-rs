@@ -27,22 +27,23 @@ fn main() {
     }
 
     // Call rng synchronously (commented out)
-    // let ret = Rng::gen(&mut buffer, num);
+    let ret = Rng::gen(&mut buffer, num);
 
     // using asynchronous API to generate numbers
     //
     // the callback is of the type that implements Upcall trait
-    let callback = Cell::new(Option::<(u32,)>::None);
-    let ret = share::scope(|handle| {
-        Rng::gen_async(&callback, &mut buffer, handle, num)?;
-        // waits for the function Rng::gen_async() to finish
-        TockSyscalls::yield_wait();
-        // check if upcall was invoked
-        match callback.get() {
-            Some((_,)) => Ok(()),
-            _ => Err(ErrorCode::Fail),
-        }
-    });
+    //
+    // let callback = Cell::new(Option::<(u32,)>::None);
+    // let ret = share::scope(|handle| {
+    //     Rng::gen_async(&callback, &mut buffer, handle, num)?;
+    //     // waits for the function Rng::gen_async() to finish
+    //     TockSyscalls::yield_wait();
+    //     // check if upcall was invoked
+    //     match callback.get() {
+    //         Some((_,)) => Ok(()),
+    //         _ => Err(ErrorCode::Fail),
+    //     }
+    // });
 
     // error handling code
     if let Err(e) = ret {
