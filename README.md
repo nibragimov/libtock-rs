@@ -14,7 +14,7 @@ The experiments for thesis were run using BBC micro:bit board v2.20 (microbit_v2
 1.  Clone the repository:
 
     ```shell
-    git clone --recursive https://github.com/tock/libtock-rs
+    git clone -b thesis --recursive https://github.com/tock/libtock-rs
     cd libtock-rs
     ```
 
