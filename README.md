@@ -24,7 +24,7 @@ The experiments for thesis were run using BBC micro:bit board v2.20 (microbit_v2
     make setup
     ```
     
-1.  Use `make` to build examples:
+1.  Use `make` to build examples and run on microbit board:
 
     ```bash
     make flash-microbit_v2 EXAMPLE=rng # Flash the example 'rng' program to microbit_v2 platform
